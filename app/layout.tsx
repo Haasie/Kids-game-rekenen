@@ -25,7 +25,11 @@ const CSP = `
   script-src 'self' 'unsafe-eval' 'unsafe-inline';
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob:;
+  media-src 'self';
   font-src 'self';
+  connect-src 'self';
+  worker-src 'self';
+  manifest-src 'self';
   object-src 'none';
   base-uri 'self';
   form-action 'self';
