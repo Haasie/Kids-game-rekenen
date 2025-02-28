@@ -11,7 +11,8 @@ export default function HighScoreModal({ score, onSave }: HighScoreModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    const name = form.name.value.trim();
+    const nameInput = form.elements.namedItem('name') as HTMLInputElement;
+    const name = nameInput.value.trim();
     if (name) {
       onSave(name);
     }
