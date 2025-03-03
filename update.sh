@@ -3,7 +3,19 @@
 # Kleuren voor output
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
+
+# Functie voor error handling
+handle_error() {
+    echo -e "${RED}Error: $1${NC}"
+    exit 1
+}
+
+# Check of we in de juiste directory zijn
+if [ ! -f "package.json" ]; then
+    handle_error "package.json niet gevonden. Zorg dat je in de project root directory bent."
+fi
 
 echo -e "${YELLOW}1. Git toevoegen...${NC}"
 git add .
@@ -13,33 +25,51 @@ read -p "Voer je commit message in: " commit_message
 git commit -m "$commit_message"
 
 echo -e "${YELLOW}3. Push naar GitHub...${NC}"
-git push origin main
+git push origin main || handle_error "Git push mislukt"
 
 echo -e "${YELLOW}4. Update app op server...${NC}"
-ssh root@rekenapp << 'EOF'
-  cd /opt/kids-game-rekenen
+ssh root@rekenapp << 'EOF' || handle_error "SSH verbinding mislukt"
+  cd /opt/kids-game-rekenen || exit 1
+
+  echo "Maak backup van scores..."
+  cp -f data/scores.json data/scores.json.backup 2>/dev/null || true
 
   echo "Reset lokale wijzigingen..."
   git reset --hard HEAD
 
   echo "Pull nieuwe wijzigingen..."
-  git pull origin main
+  git pull origin main || exit 1
 
-  echo "Installeer dependencies..."
-  npm install
+  echo "Controleer Node.js versie..."
+  node -v | grep -q "v18" || exit 1
+
+  echo "Schone installatie van dependencies..."
+  rm -rf node_modules .next
+  npm install || exit 1
 
   echo "Build de applicatie..."
-  npm run build
+  npm run build || exit 1
 
   echo "Zorg voor juiste permissies data directory..."
   mkdir -p data
   chown -R www-data:www-data data
   chmod 755 data
 
+  echo "Herstel scores backup..."
+  mv -f data/scores.json.backup data/scores.json 2>/dev/null || true
+
   echo "Herstart de applicatie..."
-  pm2 restart kids-game-rekenen
+  pm2 restart kids-game-rekenen || exit 1
+
+  # Wacht even en check of de app nog draait
+  sleep 5
+  pm2 show kids-game-rekenen | grep -q "online" || exit 1
 
   echo "App succesvol bijgewerkt!"
 EOF
 
-echo -e "${GREEN}Klaar! De app is bijgewerkt op GitHub en de server.${NC}"
+# Check deployment status
+echo -e "${YELLOW}5. Controleer deployment...${NC}"
+curl -s http://rekenapp:3000 > /dev/null || handle_error "App lijkt niet bereikbaar"
+
+echo -e "${GREEN}Klaar! De app is succesvol bijgewerkt op GitHub en de server.${NC}"
