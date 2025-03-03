@@ -9,20 +9,22 @@
   },
   "dependencies": {
     "critters": "0.0.20",
-    "framer-motion": "10.16.16",
-    "next": "14.0.4",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "framer-motion": "11.0.5",
+    "next": "14.1.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "@types/node": "20.10.5",
-    "@types/react": "18.2.45",
-    "@types/react-dom": "18.2.18",
-    "autoprefixer": "10.4.16",
+    "@types/node": "20.11.19",
+    "@types/react": "18.2.57",
+    "@types/react-dom": "18.2.19",
+    "autoprefixer": "10.4.17",
+    "@typescript-eslint/eslint-plugin": "7.0.1",
+    "@typescript-eslint/parser": "7.0.1",
     "eslint": "8.56.0",
-    "eslint-config-next": "14.0.4",
-    "postcss": "8.4.32",
-    "tailwindcss": "3.4.0",
+    "eslint-config-next": "14.1.0",
+    "postcss": "8.4.35",
+    "tailwindcss": "3.4.1",
     "typescript": "5.3.3"
   },
   "scripts": {
@@ -32,11 +34,17 @@
     "lint": "next lint",
     "check-updates": "npx npm-check-updates",
     "update-deps": "npx npm-check-updates -u && npm install",
-    "clean": "rm -rf .next node_modules",
+    "clean": "rm -rf .next node_modules package-lock.json",
     "reinstall": "npm run clean && npm install",
-    "validate": "npm run lint && npm run build"
+    "validate": "npm run lint && npm run build",
+    "security": "npm audit fix && npm audit"
   },
   "keywords": ["rekenen", "kinderen", "educatie", "ruimte", "spel"],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "resolutions": {
+    "glob": "^10.3.10",
+    "@humanwhocodes/object-schema": "^2.1.1",
+    "inflight": "^2.0.0"
+  }
 }
