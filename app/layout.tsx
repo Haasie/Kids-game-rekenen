@@ -1,3 +1,5 @@
+'use client';
+
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import ServiceWorkerRegistration from './components/ServiceWorkerRegistration';
@@ -11,7 +13,32 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: 'Ruimte Rekenen',
-  description: 'Een leuke rekenapp voor kinderen met een ruimte-thema',
+  description: 'Een leuk rekenspel voor kinderen',
+  icons: {
+    icon: [
+      {
+        url: '/favicon.ico',
+        sizes: 'any',
+      },
+      {
+        url: '/favicon-16x16.png',
+        sizes: '16x16',
+        type: 'image/png',
+      },
+      {
+        url: '/favicon-32x32.png',
+        sizes: '32x32',
+        type: 'image/png',
+      },
+    ],
+    apple: [
+      {
+        url: '/apple-touch-icon.png',
+        sizes: '180x180',
+        type: 'image/png',
+      },
+    ],
+  },
   metadataBase: new URL('https://your-domain.com'),
   applicationName: 'Ruimte Rekenen',
   authors: [{ name: 'Your Name' }],
@@ -54,9 +81,6 @@ export default function RootLayout({
         <title>Ruimte Rekenen</title>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#4C1D95" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body>
         <main className="min-h-screen bg-gradient-to-b from-purple-900 to-blue-900 text-white p-4">
