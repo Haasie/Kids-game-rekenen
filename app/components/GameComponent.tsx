@@ -85,13 +85,20 @@ const validateAnswer = (answer: string): boolean => {
 };
 
 function GameComponent({ onScoreUpdate, onGameOver }: GameComponentProps) {
+  console.log('GameComponent gerenderd');
+
   const [score, setScore] = useState(0);
-  const [currentProblem, setCurrentProblem] = useState(() => ({
-    num1: Math.floor(Math.random() * 20) + 1,
-    num2: Math.floor(Math.random() * 20) + 1,
-    operator: '+',
-    answer: 0
-  }));
+  const [currentProblem, setCurrentProblem] = useState(() => {
+    console.log('Initieel probleem genereren');
+    const problem = {
+      num1: Math.floor(Math.random() * 20) + 1,
+      num2: Math.floor(Math.random() * 20) + 1,
+      operator: '+',
+      answer: 0
+    };
+    console.log('Gegenereerd probleem:', problem);
+    return problem;
+  });
   const [userAnswer, setUserAnswer] = useState('');
   const [timeLeft, setTimeLeft] = useState(15);
   const [showLaser, setShowLaser] = useState(false);
@@ -133,10 +140,12 @@ function GameComponent({ onScoreUpdate, onGameOver }: GameComponentProps) {
   }, []);
 
   useEffect(() => {
+    console.log('generateProblem useEffect aangeroepen');
     generateProblem();
   }, [generateProblem]);
 
   useEffect(() => {
+    console.log('Timer useEffect aangeroepen, timeLeft:', timeLeft);
     if (timeLeft > 0) {
       const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
       return () => clearInterval(timer);

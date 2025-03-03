@@ -62,8 +62,11 @@ export default function Home() {
   };
 
   const handleStartGame = () => {
+    console.log('handleStartGame aangeroepen');
     setScore(0);
+    console.log('Score gereset naar 0');
     setGameStarted(true);
+    console.log('gameStarted gezet naar true');
   };
 
   return (
@@ -113,7 +116,10 @@ export default function Home() {
         {!gameStarted ? (
           <div className="text-center">
             <button
-              onClick={handleStartGame}
+              onClick={() => {
+                console.log('Start knop geklikt');
+                handleStartGame();
+              }}
               className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-full text-xl font-bold hover:from-pink-600 hover:to-purple-600 transform hover:scale-105 transition-all"
             >
               {finalScore > 0 ? 'Speel nog een keer!' : 'Start het Avontuur!'}
