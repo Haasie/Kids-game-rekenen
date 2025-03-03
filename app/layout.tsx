@@ -1,5 +1,3 @@
-'use client';
-
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import ServiceWorkerRegistration from './components/ServiceWorkerRegistration';
@@ -53,7 +51,7 @@ const CSP = `
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob:;
   media-src 'self';
-  font-src 'self';
+  font-src 'self' data:;
   connect-src 'self';
   worker-src 'self';
   manifest-src 'self';
@@ -78,9 +76,6 @@ export default function RootLayout({
         <meta name="description" content="Een leuk ruimte rekenen spel voor kinderen" />
         <meta httpEquiv="Content-Security-Policy" content={CSP} />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
-        <title>Ruimte Rekenen</title>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#4C1D95" />
       </head>
       <body>
         <main className="min-h-screen bg-gradient-to-b from-purple-900 to-blue-900 text-white p-4">
