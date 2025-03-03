@@ -1,28 +1,45 @@
 #!/bin/bash
 
-echo "🚀 Start update proces voor Ruimte Rekenen..."
+# Kleuren voor output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-# Stop de huidige app
-echo "📋 Stop de huidige app..."
-pm2 stop ruimte-rekenen
+echo -e "${YELLOW}1. Git toevoegen...${NC}"
+git add .
 
-# Verwijder build directories
-echo "🗑️  Verwijder oude build bestanden..."
-rm -rf .next node_modules
+echo -e "${YELLOW}2. Git commit...${NC}"
+read -p "Voer je commit message in: " commit_message
+git commit -m "$commit_message"
 
-# Pull nieuwe code
-echo "⬇️  Download nieuwe code..."
-git pull
+echo -e "${YELLOW}3. Push naar GitHub...${NC}"
+git push origin main
 
-# Installeer dependencies en bouw opnieuw
-echo "🏗️  Installeer dependencies..."
-npm install
+echo -e "${YELLOW}4. Update app op server...${NC}"
+ssh root@rekenapp << 'EOF'
+  cd /opt/kids-game-rekenen
 
-echo "🔨 Bouw de app..."
-npm run build
+  echo "Reset lokale wijzigingen..."
+  git reset --hard HEAD
 
-# Start de app opnieuw
-echo "✨ Start de app opnieuw..."
-pm2 start npm --name "ruimte-rekenen" -- start
+  echo "Pull nieuwe wijzigingen..."
+  git pull origin main
 
-echo "✅ Update voltooid! De app draait nu op http://localhost:3000"
+  echo "Installeer dependencies..."
+  npm install
+
+  echo "Build de applicatie..."
+  npm run build
+
+  echo "Zorg voor juiste permissies data directory..."
+  mkdir -p data
+  chown -R www-data:www-data data
+  chmod 755 data
+
+  echo "Herstart de applicatie..."
+  pm2 restart kids-game-rekenen
+
+  echo "App succesvol bijgewerkt!"
+EOF
+
+echo -e "${GREEN}Klaar! De app is bijgewerkt op GitHub en de server.${NC}"
