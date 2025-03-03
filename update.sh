@@ -28,7 +28,7 @@ echo -e "${YELLOW}3. Push naar GitHub...${NC}"
 git push origin main || handle_error "Git push mislukt"
 
 echo -e "${YELLOW}4. Update app op server...${NC}"
-ssh -T root@rekenapp << 'EOF' || handle_error "SSH verbinding mislukt"
+ssh -T root@192.168.1.18 << 'EOF' || handle_error "SSH verbinding mislukt"
 set -e # Stop bij eerste error
 
 cd /opt/kids-game-rekenen || exit 1
