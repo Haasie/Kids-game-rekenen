@@ -28,48 +28,51 @@ echo -e "${YELLOW}3. Push naar GitHub...${NC}"
 git push origin main || handle_error "Git push mislukt"
 
 echo -e "${YELLOW}4. Update app op server...${NC}"
-ssh root@rekenapp << 'EOF' || handle_error "SSH verbinding mislukt"
-  cd /opt/kids-game-rekenen || exit 1
+ssh -T root@rekenapp << 'EOF' || handle_error "SSH verbinding mislukt"
+set -e # Stop bij eerste error
 
-  echo "Maak backup van scores..."
-  cp -f data/scores.json data/scores.json.backup 2>/dev/null || true
+cd /opt/kids-game-rekenen || exit 1
 
-  echo "Reset lokale wijzigingen..."
-  git reset --hard HEAD
+echo "Maak backup van scores..."
+cp -f data/scores.json data/scores.json.backup 2>/dev/null || true
 
-  echo "Pull nieuwe wijzigingen..."
-  git pull origin main || exit 1
+echo "Reset lokale wijzigingen..."
+git reset --hard HEAD
 
-  echo "Controleer Node.js versie..."
-  node -v | grep -q "v18" || exit 1
+echo "Pull nieuwe wijzigingen..."
+git pull origin main
 
-  echo "Schone installatie van dependencies..."
-  rm -rf node_modules .next
-  npm install || exit 1
+echo "Controleer Node.js versie..."
+node -v | grep -q "v18" || exit 1
 
-  echo "Build de applicatie..."
-  npm run build || exit 1
+echo "Schone installatie van dependencies..."
+rm -rf node_modules .next package-lock.json
+npm install --no-audit
 
-  echo "Zorg voor juiste permissies data directory..."
-  mkdir -p data
-  chown -R www-data:www-data data
-  chmod 755 data
+echo "Build de applicatie..."
+npm run build
 
-  echo "Herstel scores backup..."
-  mv -f data/scores.json.backup data/scores.json 2>/dev/null || true
+echo "Zorg voor juiste permissies data directory..."
+mkdir -p data
+chown -R www-data:www-data data
+chmod 755 data
 
-  echo "Herstart de applicatie..."
-  pm2 restart kids-game-rekenen || exit 1
+echo "Herstel scores backup..."
+mv -f data/scores.json.backup data/scores.json 2>/dev/null || true
 
-  # Wacht even en check of de app nog draait
-  sleep 5
-  pm2 show kids-game-rekenen | grep -q "online" || exit 1
+echo "Herstart de applicatie..."
+pm2 restart kids-game-rekenen
 
-  echo "App succesvol bijgewerkt!"
+# Wacht even en check of de app nog draait
+sleep 5
+pm2 show kids-game-rekenen | grep -q "online" || exit 1
+
+echo "App succesvol bijgewerkt!"
 EOF
 
 # Check deployment status
 echo -e "${YELLOW}5. Controleer deployment...${NC}"
+sleep 2 # Wacht even tot de app volledig is opgestart
 curl -s http://rekenapp:3000 > /dev/null || handle_error "App lijkt niet bereikbaar"
 
 echo -e "${GREEN}Klaar! De app is succesvol bijgewerkt op GitHub en de server.${NC}"
