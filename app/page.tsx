@@ -13,20 +13,38 @@ interface HighScore {
   date: string;
 }
 
+interface ScoreData {
+  scores: HighScore[];
+  lastReset: string;
+}
+
 export default function Home() {
   const [score, setScore] = useState(0);
   const [highScores, setHighScores] = useState<HighScore[]>([]);
   const [showHighScoreModal, setShowHighScoreModal] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
+  const [nextReset, setNextReset] = useState<string>('');
 
   useEffect(() => {
-    // Laad de highscores uit localStorage
-    const savedHighScores = localStorage.getItem('highScores');
-    if (savedHighScores) {
-      setHighScores(JSON.parse(savedHighScores));
-    }
+    // Laad de highscores van de server
+    fetchScores();
   }, []);
+
+  const fetchScores = async () => {
+    try {
+      const response = await fetch('/api/scores');
+      const data: ScoreData = await response.json();
+      setHighScores(data.scores);
+
+      // Bereken wanneer de volgende reset is
+      const lastReset = new Date(data.lastReset);
+      const nextResetDate = new Date(lastReset.getTime() + 7 * 24 * 60 * 60 * 1000);
+      setNextReset(nextResetDate.toLocaleDateString('nl-NL'));
+    } catch (error) {
+      console.error('Fout bij ophalen scores:', error);
+    }
+  };
 
   const handleScoreUpdate = (newScore: number) => {
     setScore(newScore);
@@ -45,28 +63,31 @@ export default function Home() {
     }
   };
 
-  const handleHighScoreSave = (name: string) => {
-    const newHighScore: HighScore = {
-      name,
-      score: finalScore,
-      date: new Date().toLocaleDateString('nl-NL')
-    };
+  const handleHighScoreSave = async (name: string) => {
+    try {
+      const response = await fetch('/api/scores', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          score: finalScore,
+        }),
+      });
 
-    const updatedHighScores = [...highScores, newHighScore]
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 5);
-
-    setHighScores(updatedHighScores);
-    localStorage.setItem('highScores', JSON.stringify(updatedHighScores));
-    setShowHighScoreModal(false);
+      const data: ScoreData = await response.json();
+      setHighScores(data.scores);
+      setShowHighScoreModal(false);
+    } catch (error) {
+      console.error('Fout bij opslaan score:', error);
+      alert('Er ging iets mis bij het opslaan van je score. Probeer het nog eens!');
+    }
   };
 
   const handleStartGame = () => {
-    console.log('handleStartGame aangeroepen');
     setScore(0);
-    console.log('Score gereset naar 0');
     setGameStarted(true);
-    console.log('gameStarted gezet naar true');
   };
 
   return (
@@ -95,6 +116,9 @@ export default function Home() {
           {/* Highscores tabel */}
           <div className="bg-purple-800 bg-opacity-50 rounded-lg p-4 max-w-md mx-auto mb-8">
             <h2 className="text-2xl font-bold mb-4 text-yellow-400">Top 5 Highscores</h2>
+            <p className="text-sm text-gray-300 mb-4">
+              Volgende reset: {nextReset}
+            </p>
             {highScores.length > 0 ? (
               <div className="space-y-2">
                 {highScores.map((hs, index) => (
@@ -108,7 +132,7 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-300">Nog geen highscores!</p>
+              <p className="text-gray-300">Nog geen highscores deze week!</p>
             )}
           </div>
         </div>
@@ -116,10 +140,7 @@ export default function Home() {
         {!gameStarted ? (
           <div className="text-center">
             <button
-              onClick={() => {
-                console.log('Start knop geklikt');
-                handleStartGame();
-              }}
+              onClick={handleStartGame}
               className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-full text-xl font-bold hover:from-pink-600 hover:to-purple-600 transform hover:scale-105 transition-all"
             >
               {finalScore > 0 ? 'Speel nog een keer!' : 'Start het Avontuur!'}
