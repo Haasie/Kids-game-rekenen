@@ -34,7 +34,6 @@ export const metadata: Metadata = {
   authors: [{ name: 'Your Name' }],
   keywords: ['rekenen', 'kinderen', 'educatie', 'ruimte', 'spel'],
   robots: 'index, follow',
-  themeColor: '#4C1D95',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
