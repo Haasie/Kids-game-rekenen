@@ -49,7 +49,7 @@
   "author": "",
   "license": "ISC",
   "resolutions": {
-    "glob": "^11.0.0",
+    "glob": "^10.4.5",
     "@humanwhocodes/object-schema": "^2.1.1",
     "inflight": "^2.0.0"
   }
