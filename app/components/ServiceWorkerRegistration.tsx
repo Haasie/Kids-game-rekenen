@@ -7,7 +7,7 @@ export default function ServiceWorkerRegistration() {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js').then(
-          function(registration) {
+          function() {
             console.log('ServiceWorker registration successful');
           },
           function(err) {
