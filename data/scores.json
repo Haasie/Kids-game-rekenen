@@ -1,15 +1,4 @@
 {
-  "scores": [
-    {
-      "name": "Joeri",
-      "score": 6,
-      "date": "3-3-2025"
-    },
-    {
-      "name": "hi",
-      "score": 1,
-      "date": "3-3-2025"
-    }
-  ],
-  "lastReset": "2025-03-03T10:47:32.606Z"
+  "scores": [],
+  "lastReset": "2025-03-20T10:59:45.755Z"
 }
