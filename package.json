@@ -9,25 +9,23 @@
   },
   "dependencies": {
     "critters": "0.0.25",
-    "framer-motion": "12.5.0",
-    "next": "^15.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "framer-motion": "12.4.10",
+    "next": "14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.12",
-    "@types/node": "22.13.10",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "@typescript-eslint/eslint-plugin": "8.27.0",
-    "@typescript-eslint/parser": "8.27.0",
+    "@types/node": "^20.11.19",
+    "@types/react": "^18.2.57",
+    "@types/react-dom": "^18.2.19",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
     "autoprefixer": "^10.4.17",
-    "eslint": "9.22.0",
-    "eslint-config-next": "15.2.3",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "14.1.0",
     "postcss": "^8.4.35",
-    "postcss-import": "^16.0.1",
-    "tailwindcss": "^4.0.0",
-    "typescript": "5.8.2"
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
   },
   "scripts": {
     "dev": "next dev",
